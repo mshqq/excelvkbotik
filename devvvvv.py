@@ -39,7 +39,7 @@ sheet_id = "149qpJ-f7C8mWSMqpzsGTjoFqs1U4ANK6GClNvvw4iRc"
 
 #подключаем vk_api
 vk_session = vk_api.VkApi(
-token='vk1.a.D-fpNfhiMevsybE67PEzjofN0fo3q8Tz0rULa4fv8l526myts35sExA_C2y5OSZo5PEvZ4TH0gZp_X-vja5IGM1cSoULqNDnyjXyd7l9puFj55doKD8Z_7QAlx_0Njyecj3BdliucdodfTUG-Magsb1jTtcG6k8UHHq8weaQja0PPpRQRC9k6cR3dD7CwmIt')
+token='vk1.a.6s7T854sQ9SJXCfyl2_Q2iofR9LWyVEcSungdfDsm0328JNfiIFhrJfTnipIm5gefZWyaIqOo4mL4EbDQkrlCgUY76aoifQmsu4p67yz_BHtSSLtahOfe6Kqzlg_6MflFyXoYYqpyW9SsL_UDTrt9iIUaULWFXi01bcSNYfuTZpnpPGtLo9Ts2XSqbEFY8pt')
 from vk_api.longpoll import VkLongPoll, VkEventType
 
 #запускаем прослушку канала сообщений
