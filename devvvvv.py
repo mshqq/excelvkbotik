@@ -84,6 +84,7 @@ global res
 
 class bot:
     def main(self):
+        global resp
         def job():
             today = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
             weekOfTheDay = datetime.datetime.weekday(today)
@@ -391,6 +392,8 @@ class bot:
                 keyboard=keyboard.get_keyboard()
             )
         def saturday(user_id):
+            global res
+            global resp
             resp = sheet.values().get(spreadsheetId=sheet_id, range="Уроки!W58:W68").execute()
             print(resp)
             values = resp.get('values', [])
@@ -403,12 +406,21 @@ class bot:
                 text2 = '\n\nХорошего дня!'
                 res = text + '\n'.join(
                 '{}. {}'.format(i, ''.join(map(str, t))) for i, t in enumerate(listtt, 1)) + text2
-            vk.messages.send(
-                user_id=event.user_id,
-                message=res,
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )  
+                if res == "majorDimension":
+                    vk.messages.send(
+                        user_id=event.user_id,
+                        message="Расписание не обнаружено",
+                        random_id=get_random_id(),
+                        keyboard=keyboard.get_keyboard()
+                    )
+            else:
+                vk.messages.send(
+                    user_id=event.user_id,
+                    message=resp,
+                    random_id=get_random_id(),
+                    keyboard=keyboard.get_keyboard()
+                )
+            
 
         for event in longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
@@ -449,7 +461,7 @@ class bot:
 b = bot()
 
 def scheduleRunner(self):
-    schedule.every().day.at("01:00").do(b.main().job())
+    schedule.every().day.at("01:00").do(b.main().job)
     while True:
         schedule.run_pending()
         time.sleep(1)
