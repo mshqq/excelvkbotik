@@ -21,6 +21,7 @@ import schedule
 import time
 import random
 import threading
+import requests
 
 #функции Google API Service
 def get_service_simple():
@@ -420,43 +421,48 @@ class bot:
                     random_id=get_random_id(),
                     keyboard=keyboard.get_keyboard()
                 )
-            
-
-        for event in longpoll.listen():
-            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                if event.text.lower() == "начать" or event.text.lower() == "меню":
-                    start()
-                if event.text.lower() == "рассылка":
-                    subStatus(user_id=event.user_id)
-                if event.text.lower() == "подписаться на рассылку":
-                    addUserToSub(user_id=event.user_id)
-                if event.text.lower() == "отписаться от рассылки":
-                    deleteSub(user_id=event.user_id)
-                if event.text.lower() == "сегодня":
-                    timetableToday()
-                if event.text.lower() == "завтра":
-                    timetableTomorrow()
-                if event.text.lower() == "послезавтра":
-                    timetableNextNextday()
-                if event.text.lower() == "выбор по дню недели":
-                    vk.messages.send(
-                        user_id=event.user_id,
-                        random_id=get_random_id(),
-                        message="Воспользуйтесь клавиатурой для выбора дня",
-                        keyboard=keyboardDayOfTheWeek.get_keyboard()
-                    )    
-                if event.text.lower() == "понедельник":
-                    monday(user_id=event.user_id)
-                if event.text.lower() == "вторник":
-                    tuesday(user_id=event.user_id)
-                if event.text.lower() == "среда":
-                    wednesday(user_id=event.user_id)
-                if event.text.lower() == "четверг":
-                    thursday(user_id=event.user_id)
-                if event.text.lower() == "пятница":
-                    friday(user_id=event.user_id)
-                if event.text.lower() == "суббота":
-                    saturday(user_id=event.user_id)
+        while True:    
+            try:
+                for event in longpoll.listen():
+                    if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                        if event.text.lower() == "начать" or event.text.lower() == "меню":
+                            start()
+                        if event.text.lower() == "рассылка":
+                            subStatus(user_id=event.user_id)
+                        if event.text.lower() == "подписаться на рассылку":
+                            addUserToSub(user_id=event.user_id)
+                        if event.text.lower() == "отписаться от рассылки":
+                            deleteSub(user_id=event.user_id)
+                        if event.text.lower() == "сегодня":
+                            timetableToday()
+                        if event.text.lower() == "завтра":
+                            timetableTomorrow()
+                        if event.text.lower() == "послезавтра":
+                            timetableNextNextday()
+                        if event.text.lower() == "выбор по дню недели":
+                            vk.messages.send(
+                                user_id=event.user_id,
+                                random_id=get_random_id(),
+                                message="Воспользуйтесь клавиатурой для выбора дня",
+                                keyboard=keyboardDayOfTheWeek.get_keyboard()
+                            )    
+                        if event.text.lower() == "понедельник":
+                            monday(user_id=event.user_id)
+                        if event.text.lower() == "вторник":
+                            tuesday(user_id=event.user_id)
+                        if event.text.lower() == "среда":
+                            wednesday(user_id=event.user_id)
+                        if event.text.lower() == "четверг":
+                            thursday(user_id=event.user_id)
+                        if event.text.lower() == "пятница":
+                            friday(user_id=event.user_id)
+                        if event.text.lower() == "суббота":
+                            saturday(user_id=event.user_id)
+            except requests.exceptions.RequestException:
+                print("\n Переподключение к серверам ВК \n")
+                time.sleep(3)
+            except:
+                b.main()
 
 b = bot()
 
