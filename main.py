@@ -22,8 +22,6 @@ import time
 import random
 import threading
 import requests
-# import python3_anticaptcha
-# from python3_anticaptcha import ImageToTextTask, errors
 
 
 # функции Google API Service
@@ -43,15 +41,9 @@ service = get_service_sacc()
 sheet = service.spreadsheets()
 sheet_id = "149qpJ-f7C8mWSMqpzsGTjoFqs1U4ANK6GClNvvw4iRc"
 
-# def captcha_handler(captcha):
-#     key = ImageToTextTask.ImageToTextTask(anticaptcha_key=6badaeef1cdd70a0b40760eb3b698f95, save_format='const') \
-# .captcha_handler(captcha_link=captcha.get_url())
-
 # подключаем vk_api
 vk_session = vk_api.VkApi(
-    token='vk1.a.6s7T854sQ9SJXCfyl2_Q2iofR9LWyVEcSungdfDsm0328JNfiIFhrJfTnipIm5gefZWyaIqOo4mL4EbDQkrlCgUY76aoifQmsu4p67yz_BHtSSLtahOfe6Kqzlg_6MflFyXoYYqpyW9SsL_UDTrt9iIUaULWFXi01bcSNYfuTZpnpPGtLo9Ts2XSqbEFY8pt'
-    # captcha_handler=captcha_handler
-    )
+    token='vk1.a.6s7T854sQ9SJXCfyl2_Q2iofR9LWyVEcSungdfDsm0328JNfiIFhrJfTnipIm5gefZWyaIqOo4mL4EbDQkrlCgUY76aoifQmsu4p67yz_BHtSSLtahOfe6Kqzlg_6MflFyXoYYqpyW9SsL_UDTrt9iIUaULWFXi01bcSNYfuTZpnpPGtLo9Ts2XSqbEFY8pt')
 from vk_api.longpoll import VkLongPoll, VkEventType
 
 # запускаем прослушку канала сообщений
