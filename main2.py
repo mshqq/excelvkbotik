@@ -113,8 +113,7 @@ keyboardClassChoice.add_line()
 keyboardClassChoice.add_button('10А', color=VkKeyboardColor.PRIMARY)
 keyboardClassChoice.add_button('11А', color=VkKeyboardColor.PRIMARY)
 
-now = datetime.datetime.now()
-now.strftime("%Y-%m-%d %H:%M")
+
 
 global res
 
@@ -239,6 +238,8 @@ class bot:
                 )
         #расписание на сегодня
         def timetableToday():
+            now = datetime.datetime.now()
+            now.strftime("%Y-%m-%d %H:%M")
             userUserid = event.user_id
             user_get=vk.users.get(user_ids = userUserid)
             user_get=user_get[0]
@@ -292,6 +293,8 @@ class bot:
             print(f"{now}: {full_name}({userUserid}) - {letterForUser.upper()} - получил расписание за сегодня")
 
         def timetableTomorrow():
+            now = datetime.datetime.now()
+            now.strftime("%Y-%m-%d %H:%M")
             userUserid = event.user_id
             user_get=vk.users.get(user_ids = userUserid)
             user_get=user_get[0]
@@ -359,6 +362,8 @@ class bot:
             )
 
         def timetableNextNextday():
+            now = datetime.datetime.now()
+            now.strftime("%Y-%m-%d %H:%M")
             userUserid = event.user_id
             user_get=vk.users.get(user_ids = userUserid)
             user_get=user_get[0]
@@ -436,6 +441,8 @@ class bot:
                 )
 
         def monday(user_id):
+            now = datetime.datetime.now()
+            now.strftime("%Y-%m-%d %H:%M")
             userUserid = event.user_id
             user_get=vk.users.get(user_ids = userUserid)
             user_get=user_get[0]
@@ -470,6 +477,8 @@ class bot:
             print(f"{now}: {full_name}({userUserid}) - {letterForUser.upper()} - получил расписание на понедельник")
 
         def tuesday(user_id):
+            now = datetime.datetime.now()
+            now.strftime("%Y-%m-%d %H:%M")
             userUserid = event.user_id
             user_get=vk.users.get(user_ids = userUserid)
             user_get=user_get[0]
@@ -504,6 +513,8 @@ class bot:
             print(f"{now}: {full_name}({userUserid}) - {letterForUser.upper()} - получил расписание на вторник")
 
         def wednesday(user_id):
+            now = datetime.datetime.now()
+            now.strftime("%Y-%m-%d %H:%M")
             userUserid = event.user_id
             user_get=vk.users.get(user_ids = userUserid)
             user_get=user_get[0]
@@ -538,6 +549,8 @@ class bot:
             print(f"{now}: {full_name}({userUserid}) - {letterForUser.upper()} - получил расписание на среду")
 
         def thursday(user_id):
+            now = datetime.datetime.now()
+            now.strftime("%Y-%m-%d %H:%M")
             userUserid = event.user_id
             user_get=vk.users.get(user_ids = userUserid)
             user_get=user_get[0]
@@ -572,6 +585,8 @@ class bot:
             print(f"{now}: {full_name}({userUserid}) - {letterForUser.upper()} - получил расписание на четверг")
 
         def friday(user_id):
+            now = datetime.datetime.now()
+            now.strftime("%Y-%m-%d %H:%M")
             userUserid = event.user_id
             user_get=vk.users.get(user_ids = userUserid)
             user_get=user_get[0]
@@ -606,6 +621,8 @@ class bot:
             print(f"{now}: {full_name}({userUserid}) - {letterForUser.upper()} - получил расписание на пятницу")
 
         def saturday(user_id):
+            now = datetime.datetime.now()
+            now.strftime("%Y-%m-%d %H:%M")
             userUserid = event.user_id
             user_get=vk.users.get(user_ids = userUserid)
             user_get=user_get[0]
