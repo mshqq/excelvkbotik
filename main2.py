@@ -779,9 +779,9 @@ class bot:
                             )
                         if event.text.lower() == "7а":
                             if db.contains(User["user_id"] == event.user_id) == True:
-                                updateUserClass(user_id=event.user_id, userChoice="7б")
+                                updateUserClass(user_id=event.user_id, userChoice="7а")
                             else:
-                                addUserToClass(user_id=event.user_id, userChoice="7в")
+                                addUserToClass(user_id=event.user_id, userChoice="7а")
                             vk.messages.send(
                                     user_id=event.user_id,
                                     message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
