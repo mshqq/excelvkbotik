@@ -41,7 +41,7 @@ sheet_id = "149qpJ-f7C8mWSMqpzsGTjoFqs1U4ANK6GClNvvw4iRc"
 
 #подключаем vk_api
 vk_session = vk_api.VkApi(
-token='vk1.a.6s7T854sQ9SJXCfyl2_Q2iofR9LWyVEcSungdfDsm0328JNfiIFhrJfTnipIm5gefZWyaIqOo4mL4EbDQkrlCgUY76aoifQmsu4p67yz_BHtSSLtahOfe6Kqzlg_6MflFyXoYYqpyW9SsL_UDTrt9iIUaULWFXi01bcSNYfuTZpnpPGtLo9Ts2XSqbEFY8pt')
+token='vk1.a.D-fpNfhiMevsybE67PEzjofN0fo3q8Tz0rULa4fv8l526myts35sExA_C2y5OSZo5PEvZ4TH0gZp_X-vja5IGM1cSoULqNDnyjXyd7l9puFj55doKD8Z_7QAlx_0Njyecj3BdliucdodfTUG-Magsb1jTtcG6k8UHHq8weaQja0PPpRQRC9k6cR3dD7CwmIt')
 from vk_api.longpoll import VkLongPoll, VkEventType
 longpoll = VkLongPoll(vk_session)
 vk = vk_session.get_api()
@@ -111,6 +111,23 @@ cursor = conn.cursor()
 
 class bot:
     def main(self):
+
+        def send_message(message):
+            vk.messages.send(
+                    user_id=event.user_id,
+                    message=message,
+                    random_id=get_random_id(),
+                    keyboard=keyboard.get_keyboard()
+            )
+
+        def error_message():
+            vk.messages.send(
+                user_id=event.user_id,
+                message="Не удалось получить расписание на этот день!\nВозвращаю клавиатуру...",
+                random_id=get_random_id(),
+                keyboard=keyboard.get_keyboard()
+            )
+
         def userInfo():
             us_id = event.user_id
             user_get=vk.users.get(user_ids = (event.user_id))
@@ -234,12 +251,10 @@ class bot:
                 text2 = '\n\nХорошего дня!'
                 res = text + '\n'.join(
                 '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            vk.messages.send(
-                user_id=event.user_id,
-                message=res,
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )
+            try:
+                send_message(message=res)
+            except:
+                error_message()
 
         def timetableTomorrow():
             now = datetime.datetime.now()
@@ -283,12 +298,10 @@ class bot:
                 text2 = '\n\nХорошего дня!'
                 res = text + '\n'.join(
                 '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            vk.messages.send(
-                user_id=event.user_id,
-                message=res,
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )
+            try:
+                send_message(message=res)
+            except:
+                error_message()
 
         def monday(user_id):
             now = datetime.datetime.now()
@@ -308,12 +321,10 @@ class bot:
                 text2 = '\n\nХорошего дня!'
                 res = text + '\n'.join(
                 '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            vk.messages.send(
-                user_id=event.user_id,
-                message=res,
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )
+            try:
+                send_message(message=res)
+            except:
+                error_message()
 
         def tuesday(user_id):
             now = datetime.datetime.now()
@@ -333,12 +344,10 @@ class bot:
                 text2 = '\n\nХорошего дня!'
                 res = text + '\n'.join(
                 '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            vk.messages.send(
-                user_id=event.user_id,
-                message=res,
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )
+            try:
+                send_message(message=res)
+            except:
+                error_message()
 
         def wednesday(user_id):
             now = datetime.datetime.now()
@@ -359,19 +368,9 @@ class bot:
                 res = text + '\n'.join(
                 '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
             try:
-                vk.messages.send(
-                user_id=event.user_id,
-                message=res,
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )
-            except vk_api.exceptions.ApiError as e:
-                vk.messages.send(
-                user_id=event.user_id,
-                message="Хуй",
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )
+                send_message(message=res)
+            except:
+                error_message()
 
         def thursday(user_id):
             now = datetime.datetime.now()
@@ -391,12 +390,10 @@ class bot:
                 text2 = '\n\nХорошего дня!'
                 res = text + '\n'.join(
                 '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            vk.messages.send(
-                user_id=event.user_id,
-                message=res,
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )
+            try:
+                send_message(message=res)
+            except:
+                error_message()
 
         def friday(user_id):
             now = datetime.datetime.now()
@@ -416,12 +413,10 @@ class bot:
                 text2 = '\n\nХорошего дня!'
                 res = text + '\n'.join(
                 '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            vk.messages.send(
-                user_id=event.user_id,
-                message=res,
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )
+            try:
+                send_message(message=res)
+            except:
+                error_message()
 
         def saturday(user_id):
             now = datetime.datetime.now()
@@ -441,12 +436,10 @@ class bot:
                 text2 = '\n\nХорошего дня!'
                 res = text + '\n'.join(
                 '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            vk.messages.send(
-                user_id=event.user_id,
-                message=res,
-                random_id=get_random_id(),
-                keyboard=keyboard.get_keyboard()
-            )
+            try:
+                send_message(message=res)
+            except:
+                error_message()
 
         while True:    
             try:
