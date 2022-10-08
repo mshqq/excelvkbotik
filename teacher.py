@@ -67,3 +67,6 @@ def timetable():
         '{}.{}'.format(i, ''.join((map(str, t)))) for i, t in enumerate(listtt, 1)) + text2
         print(res)
 timetable()
+def day_week(self):
+        return datetime.datetime.today().isoweekday()
+print(day_week(self))
