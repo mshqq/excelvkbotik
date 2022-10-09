@@ -164,16 +164,12 @@ class bot:
 
         def get_today(self, user_id):
             today = datetime.datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%d.%m.%Y")
-            print(today)
             day = day_week(self)
             letterForUser, letterOfTheClass = checkUserClass(user_id)
-            print(letterOfTheClass)
-            print(day)
             if int(day) > 6:
                 emptiness_day()
             text = f'Расписание {letterForUser} на сегодня {today}:\n\n'
             res = text + get_timedata(self, day, letterOfTheClass)
-            print(res)
             try:
                 send_message(message=res)
             except:
@@ -309,10 +305,8 @@ class bot:
                             startMessage()
                         if event.text.lower() == "сегодня":
                             get_today(self=self, user_id=event.user_id)
-                            print("Хуй")
                         if event.text.lower() == "завтра":
                             get_tomorrow(self=self, user_id=event.user_id)
-                            print("Хуй")
                         if event.text.lower() == "выбор по дню недели":
                             vk.messages.send(
                                 user_id=event.user_id,
@@ -327,8 +321,6 @@ class bot:
                                 message="Воспользуйтесь клавиатурой для выбора класса",
                                 keyboard=keyboardClassChoice.get_keyboard()
                             )
-                        if event.text.lower() == "хуй":
-                            print(day_week(self))
                         if event.text.lower() == "понедельник":
                             get_day_timetable(self, day=1, user_id=event.user_id)
                         if event.text.lower() == "вторник":
