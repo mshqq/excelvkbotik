@@ -206,7 +206,13 @@ class bot:
                     random_id=get_random_id(),
                     keyboard=keyboard.get_keyboard()
             )
-
+        def unknown_message():
+            vk.messages.send(
+                user_id=event.user_id,
+                message="Не понимаю вашу команду!\nВозвращаю клавиатуру...",
+                random_id=get_random_id(),
+                keyboard=keyboard.get_keyboard()
+            )
         def error_message():
             vk.messages.send(
                 user_id=event.user_id,
@@ -301,6 +307,11 @@ class bot:
             try:
                 for event in longpoll.listen():
                     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                        allVars = ['начать', 'меню', 'сегодня', 'завтра', 'выбор по дню недели', 'выбор класса', 
+                        'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 
+                        '5а', '5б', '5в', '5г', '6а', '6б', '6в', '7а', '7б', '7в', '7г', '8а', '8б', '8в', '8г', '9а', '9б', '9в', '9г', '10а', '11а']
+                        if event.text.lower() not in allVars:
+                            unknown_message()
                         if event.text.lower() == "начать" or event.text.lower() == "меню":
                             startMessage()
                         if event.text.lower() == "сегодня":
