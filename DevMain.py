@@ -171,8 +171,14 @@ class bot:
             letterForUser, letterOfTheClass = checkUserClass(user_id)
             if int(day) > 6:
                 emptiness_day()
+            mainMsg = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!D1:X1").execute()
+            values3 = mainMsg.get('values', [])
+            editMsg = (str.lower(str(values3[0])))[2:][:-2]
+            editMsg = str.capitalize(editMsg)
+            print(editMsg)
+            mainMessage = editMsg + "\n\n"
             text = f'Расписание {letterForUser} на сегодня {today}:\n\n'
-            res = text + get_timedata(self, day, letterOfTheClass)
+            res = mainMessage + text + get_timedata(self, day, letterOfTheClass)
             try:
                 send_message(message=res)
                 print(f"{us_name} {us_sname}:{us_id} ({letterForUser}) получил расписание на сегодня")
@@ -187,8 +193,14 @@ class bot:
             letterForUser, letterOfTheClass = checkUserClass(user_id)
             if int(day) > 6:
                 day = 1
+            mainMsg = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!D1:X1").execute()
+            values3 = mainMsg.get('values', [])
+            editMsg = (str.lower(str(values3[0])))[2:][:-2]
+            editMsg = str.capitalize(editMsg)
+            print(editMsg)
+            mainMessage = editMsg + "\n\n"
             text = f'Расписание {letterForUser} на завтра {tomorrow.strftime("%d.%m.%Y")}:\n\n'
-            res = text + get_timedata(self, day, letterOfTheClass)
+            res = mainMessage + text + get_timedata(self, day, letterOfTheClass)
             try:
                 send_message(message=res)
                 print(f"{us_name} {us_sname}:{us_id} ({letterForUser}) получил расписание на завтра")
@@ -198,8 +210,14 @@ class bot:
         def get_day_timetable(self, day, user_id):
             us_id, us_name, us_sname, sub = userInfo()
             letterForUser, letterOfTheClass = checkUserClass(user_id)
+            mainMsg = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!D1:X1").execute()
+            values3 = mainMsg.get('values', [])
+            editMsg = (str.lower(str(values3[0])))[2:][:-2]
+            editMsg = str.capitalize(editMsg)
+            print(editMsg)
+            mainMessage = editMsg + "\n\n"
             text = f'Расписание {letterForUser} на {week_names[day - 1]}:\n\n'
-            res = text + get_timedata(self, day, letterOfTheClass)
+            res = mainMessage + text + get_timedata(self, day, letterOfTheClass)
             try:
                 send_message(message=res)
                 print(f"{us_name} {us_sname}:{us_id} ({letterForUser}) получил расписание на {week_names[day - 1]}")
