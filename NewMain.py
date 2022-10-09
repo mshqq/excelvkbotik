@@ -124,7 +124,7 @@ class bot:
         def emptiness_day():
             vk.messages.send(
                 user_id=event.user_id,
-                message="Выходной день",
+                message="Воскресенье - выходной день, уроков нет\nХорошего отдыха!🥳",
                 random_id=get_random_id(),
                 keyboard=keyboard.get_keyboard()
             )
@@ -165,6 +165,7 @@ class bot:
             return res
 
         def get_today(self, user_id):
+            us_id, us_name, us_sname, sub = userInfo()
             today = datetime.datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%d.%m.%Y")
             day = day_week(self)
             letterForUser, letterOfTheClass = checkUserClass(user_id)
@@ -174,10 +175,12 @@ class bot:
             res = text + get_timedata(self, day, letterOfTheClass)
             try:
                 send_message(message=res)
+                print(f"{us_name} {us_sname}:{us_id} ({letterForUser}) получил расписание на сегодня")
             except:
                 error_message()
 
         def get_tomorrow(self, user_id):
+            us_id, us_name, us_sname, sub = userInfo()
             today = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
             tomorrow = today + datetime.timedelta(days=1)
             day = day_week(self) + 1
@@ -188,16 +191,18 @@ class bot:
             res = text + get_timedata(self, day, letterOfTheClass)
             try:
                 send_message(message=res)
+                print(f"{us_name} {us_sname}:{us_id} ({letterForUser}) получил расписание на завтра")
             except:
                 error_message()
 
         def get_day_timetable(self, day, user_id):
+            us_id, us_name, us_sname, sub = userInfo()
             letterForUser, letterOfTheClass = checkUserClass(user_id)
             text = f'Расписание {letterForUser} на {week_names[day - 1]}:\n\n'
             res = text + get_timedata(self, day, letterOfTheClass)
-            
             try:
                 send_message(message=res)
+                print(f"{us_name} {us_sname}:{us_id} ({letterForUser}) получил расписание на {week_names[day - 1]}")
             except:
                 error_message()
 
@@ -222,16 +227,35 @@ class bot:
                 random_id=get_random_id(),
                 keyboard=keyboard.get_keyboard()
             )
-
+        def addUserClass(userClassChoice):
+            us_id, us_name, us_sname, sub = userInfo()
+            if existsUser() == True:
+                updateUser(user_class=userClassChoice, user_id=event.user_id)
+                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
+                vk.messages.send(
+                    user_id=event.user_id,
+                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
+                    random_id=get_random_id(),
+                    keyboard=keyboard.get_keyboard()
+                )
+            else:
+                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
+                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
+                vk.messages.send(
+                    user_id=event.user_id,
+                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
+                    random_id=get_random_id(),
+                    keyboard=keyboard.get_keyboard()
+                )
+        
         def userInfo():
             us_id = event.user_id
             user_get=vk.users.get(user_ids = (event.user_id))
             user_get=user_get[0]
             us_name = user_get['first_name']
             us_sname = user_get['last_name']
-            us_class = "11А"
             sub = False
-            return us_id, us_name, us_sname, us_class, sub;
+            return us_id, us_name, us_sname, sub;
 
         def registerUser(user_id: int, user_name: str, user_surname: str, user_class: str, sub: bool):
             cursor.execute('INSERT INTO ExcelVKBot (user_id, user_name, user_surname, user_class, sub) VALUES (?, ?, ?, ?, ?)', (user_id, user_name, user_surname, user_class, sub))
@@ -347,453 +371,74 @@ class bot:
                         if event.text.lower() == "суббота":
                             get_day_timetable(self, day=6, user_id=event.user_id)
                         if event.text.lower() == "5а":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "5А"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "5б":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "5Б"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "5в":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "5В"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "5г":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "5Г"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "6а":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "6А"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "6б":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "6Б"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "6в":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "6В"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "7а":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "7А"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "7б":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "7Б"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "7в":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "7В"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "7г":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "7Г"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "8а":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "8А"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "8б":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "8Б"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "8в":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "8В"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "8г":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "8Г"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "9а":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "9А"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "9б":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "9Б"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "9в":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "9В"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "9г":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "9Г"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "10а":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "10А"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         if event.text.lower() == "11а":
-                            us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "11А"
-                            if existsUser() == True:
-                                updateUser(user_class=userClassChoice, user_id=event.user_id)
-                                print(f"{us_name} {us_sname}:{us_id} обновил свой класс - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
-                            else:
-                                registerUser(user_id=us_id, user_name=us_name, user_surname=us_sname, user_class=userClassChoice, sub=sub)
-                                print(f"{us_name} {us_sname}:{us_id} зарегистрировался - {userClassChoice}")
-                                vk.messages.send(
-                                    user_id=event.user_id,
-                                    message="Данные о вашем классе успешно сохранены!\nВоспользуйтесь клавиатурой для выбора дня",
-                                    random_id=get_random_id(),
-                                    keyboard=keyboard.get_keyboard()
-                            )
+                            addUserClass(userClassChoice=userClassChoice)
                         
             except requests.exceptions.RequestException:
                 print("\n Переподключение к серверам ВК \n")
                 time.sleep(3)
             except:
                 b.main()
-
 b = bot()
 
 def scheduleRunner(self):
@@ -801,6 +446,5 @@ def scheduleRunner(self):
     while True:
         schedule.run_pending()
         time.sleep(1)
-
+        
 b.main().job().run()
-

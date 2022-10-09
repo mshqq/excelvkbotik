@@ -35,38 +35,71 @@ service = get_service_sacc()
 sheet = service.spreadsheets()
 sheet_id = "149qpJ-f7C8mWSMqpzsGTjoFqs1U4ANK6GClNvvw4iRc"
 
-def timetable():
-    timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
-    resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Учителя!C3:M3").execute()
-    print(resp)
-    print("\n")
+def day_week(self):
+    today = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
+    return today.isoweekday()
+
+def get_timedata(self, day):
+    dayWeek = day
+    if dayWeek == 1:
+        dayLetter1 = "C"
+        dayLetter2 = "M"
+    if dayWeek == 2:
+        dayLetter1 = "N"
+        dayLetter2 = "X"
+    if dayWeek == 3:
+        dayLetter1 = "Y"
+        dayLetter2 = "AI"
+    if dayWeek == 4:
+        dayLetter1 = "AJ"
+        dayLetter2 = "AT"
+    if dayWeek == 5:
+        dayLetter1 = "AU"
+        dayLetter2 = "BE"
+    if dayWeek == 6:
+        dayLetter1 = "BF"
+        dayLetter2 = "BP"
+    if dayWeek == 6:
+        timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C58:C66").execute()
+    else:
+        timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
+    timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C3:C13").execute()
+    resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Учителя!{dayLetter1}3:{dayLetter2}3").execute()
     values = resp.get('values', [])
-    print(values)
-    print("\n")
     values2 = timetableOfCalls.get('values', [])
-    count = len(values)
-    print(count)
-    print("\n")
+    count = len(values2)
     listtt = []
     listtt2 = []
     for i in range(0, count):
+        print(i)
         listtt.append((str(values[i]))[1:][:-1])
+        listtt2.append((str(values2[i]))[2:][:-2])
         print(listtt)
         print("\n")
         listtt = listtt[0]
-        print(listtt)
+        print(listtt2)
         print("\n")
         listtt = listtt.split(',')
-        for y in range(0, len(listtt)):
-            if listtt[y] == "":
-                listtt[y] = "Окно"
-        print(listtt[2])
         text = f'Расписание на сегодня:\n\n'
         text2 = '\n\nХорошего дня!'
         res = text + '\n'.join(
-        '{}.{}'.format(i, ''.join((map(str, t)))) for i, t in enumerate(listtt, 1)) + text2
-        print(res)
-timetable()
-def day_week(self):
+        '{}.({}) {}'.format(i, ''.join(map(str, g)), ''.join(map(str, t))) for i, (g, t) in enumerate(zip(listtt2, listtt), 1)) + text2
+    return res
+
+def day_week(Self):
         return datetime.datetime.today().isoweekday()
-print(day_week(self))
+
+def emptiness_day():
+    return "Воскресенье - выходной день, уроков нет\nХорошего отдыха!🥳"
+
+def get_today(self):
+    today = datetime.datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%d.%m.%Y")
+    day = day_week(self)
+    if int(day) > 6:
+        emptiness_day()
+    text = f'Расписание на сегодня:\n\n'
+    teacher = 1
+    res = text + get_timedata(self, day, teacher)
+    return res
+
+print(get_timedata(Self, day=1))
