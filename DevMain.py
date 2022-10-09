@@ -124,7 +124,7 @@ class bot:
         def emptiness_day():
             vk.messages.send(
                 user_id=event.user_id,
-                message="Выходной день",
+                message="Воскресенье - выходной день, уроков нет\nХорошего отдыха!🥳",
                 random_id=get_random_id(),
                 keyboard=keyboard.get_keyboard()
             )
