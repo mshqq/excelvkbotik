@@ -175,7 +175,6 @@ class bot:
             values3 = mainMsg.get('values', [])
             editMsg = (str.lower(str(values3[0])))[2:][:-2]
             editMsg = str.capitalize(editMsg)
-            print(editMsg)
             mainMessage = editMsg + "\n\n"
             text = f'Расписание {letterForUser} на сегодня {today}:\n\n'
             res = mainMessage + text + get_timedata(self, day, letterOfTheClass)
@@ -197,7 +196,6 @@ class bot:
             values3 = mainMsg.get('values', [])
             editMsg = (str.lower(str(values3[0])))[2:][:-2]
             editMsg = str.capitalize(editMsg)
-            print(editMsg)
             mainMessage = editMsg + "\n\n"
             text = f'Расписание {letterForUser} на завтра {tomorrow.strftime("%d.%m.%Y")}:\n\n'
             res = mainMessage + text + get_timedata(self, day, letterOfTheClass)
@@ -214,7 +212,6 @@ class bot:
             values3 = mainMsg.get('values', [])
             editMsg = (str.lower(str(values3[0])))[2:][:-2]
             editMsg = str.capitalize(editMsg)
-            print(editMsg)
             mainMessage = editMsg + "\n\n"
             text = f'Расписание {letterForUser} на {week_names[day - 1]}:\n\n'
             res = mainMessage + text + get_timedata(self, day, letterOfTheClass)
