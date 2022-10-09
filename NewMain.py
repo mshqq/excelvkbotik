@@ -112,6 +112,93 @@ cursor = conn.cursor()
 class bot:
     def main(self):
 
+        week_names = [
+            'понедельник',
+            'вторник',
+            'среду',
+            'четверг',
+            'пятницу',
+            'субботу'
+        ]
+
+        def emptiness_day():
+            vk.messages.send(
+                user_id=event.user_id,
+                message="Выходной день",
+                random_id=get_random_id(),
+                keyboard=keyboard.get_keyboard()
+            )
+
+        def day_week(self):
+            today = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
+            return today.isoweekday()
+
+        def get_timedata(self, day, letterOfTheClass):
+            weekOfTheDay = day
+            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
+            if weekOfTheDay == 1:
+                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}3:{letterOfTheClass}13").execute()
+            if weekOfTheDay == 2:
+                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}14:{letterOfTheClass}24").execute()
+            if weekOfTheDay == 3:
+                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}25:{letterOfTheClass}35").execute()
+            if weekOfTheDay == 4:
+                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}36:{letterOfTheClass}46").execute()
+            if weekOfTheDay == 5:
+                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}47:{letterOfTheClass}57").execute()
+            if weekOfTheDay == 6:
+                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C58:C35").execute()
+                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}58:{letterOfTheClass}68").execute()
+            values = resp.get('values', [])
+            values2 = timetableOfCalls.get('values', [])
+            count = len(values)
+            listtt = []
+            listtt2 = []
+            for i in range(0, count):
+                listtt.append((str(values[i]))[2:][:-2])
+                listtt2.append((str(values2[i]))[2:][:-2])
+                text2 = '\n\nХорошего дня!'
+                res ='\n'.join(
+                '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
+            return res
+
+        def get_today(self, user_id):
+            today = datetime.datetime.now(pytz.timezone('Asia/Tokyo')).strftime("%d.%m.%Y")
+            day = day_week(self)
+            letterForUser, letterOfTheClass = checkUserClass(user_id)
+            if int(day) > 6:
+                emptiness_day()
+            text = f'Расписание {letterForUser} на сегодня {today}:\n\n'
+            res = text + get_timedata(self, day, letterOfTheClass)
+            try:
+                send_message(message=res)
+            except:
+                error_message()
+
+        def get_tomorrow(self, user_id):
+            today = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
+            tomorrow = today + datetime.timedelta(days=1)
+            day = day_week(self) + 1
+            letterForUser, letterOfTheClass = checkUserClass(user_id)
+            if int(day) > 6:
+                day = 1
+            text = f'Расписание {letterForUser} на завтра {tomorrow.strftime("%d.%m.%Y")}:\n\n'
+            res = text + get_timedata(self, day, letterOfTheClass)
+            try:
+                send_message(message=res)
+            except:
+                error_message()
+
+        def get_day_timetable(self, day, user_id):
+            letterForUser, letterOfTheClass = checkUserClass(user_id)
+            text = f'Расписание {letterForUser} на {week_names[day - 1]}:\n\n'
+            res = text + get_timedata(self, day, letterOfTheClass)
+            
+            try:
+                send_message(message=res)
+            except:
+                error_message()
+
         def send_message(message):
             vk.messages.send(
                     user_id=event.user_id,
@@ -119,7 +206,13 @@ class bot:
                     random_id=get_random_id(),
                     keyboard=keyboard.get_keyboard()
             )
-
+        def unknown_message():
+            vk.messages.send(
+                user_id=event.user_id,
+                message="Не понимаю вашу команду!\nВозвращаю клавиатуру...",
+                random_id=get_random_id(),
+                keyboard=keyboard.get_keyboard()
+            )
         def error_message():
             vk.messages.send(
                 user_id=event.user_id,
@@ -202,7 +295,7 @@ class bot:
             return userClass, letterOfTheClass
 
         #приветственное сообщение
-        def start():
+        def startMessage():
             vk.messages.send(
                 user_id=event.user_id,
                 random_id=get_random_id(),
@@ -210,247 +303,21 @@ class bot:
                 keyboard=keyboardClassChoice.get_keyboard()
             )
 
-        #расписание на сегодня
-        def timetableToday():
-            now = datetime.datetime.now()
-            now.strftime("%Y-%m-%d %H:%M")
-            todayDay = datetime.date.today()
-            todayDay = todayDay.strftime("%d.%m.%Y")
-            letterForUser, letterOfTheClass = checkUserClass(user_id=event.user_id)
-            today = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
-            weekOfTheDay = datetime.datetime.weekday(today)
-            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
-            if weekOfTheDay == 0:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}3:{letterOfTheClass}13").execute()
-            if weekOfTheDay == 1:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}14:{letterOfTheClass}24").execute()
-            if weekOfTheDay == 2:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}25:{letterOfTheClass}35").execute()
-            if weekOfTheDay == 3:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}36:{letterOfTheClass}46").execute()
-            if weekOfTheDay == 4:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}47:{letterOfTheClass}57").execute()
-            if weekOfTheDay == 5:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}58:{letterOfTheClass}68").execute()
-            if weekOfTheDay == 6:
-                vk.messages.send(
-                    user_id=event.user_id,
-                    message="В воскресенье уроков нет.",
-                    random_id=get_random_id(),
-                    keyboard=keyboard.get_keyboard()
-            )
-            values = resp.get('values', [])
-            values2 = timetableOfCalls.get('values', [])
-            count = len(values)
-            listtt = []
-            listtt2 = []
-            for i in range(0, count):
-                listtt.append((str(values[i]))[2:][:-2])
-                listtt2.append((str(values2[i]))[2:][:-2])
-                text = f'Расписание {letterForUser} на сегодня {todayDay}:\n\n'
-                text2 = '\n\nХорошего дня!'
-                res = text + '\n'.join(
-                '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            try:
-                send_message(message=res)
-            except:
-                error_message()
-
-        def timetableTomorrow():
-            now = datetime.datetime.now()
-            now.strftime("%Y-%m-%d %H:%M")
-            todayDay = datetime.date.today()
-            tomorrow = todayDay + datetime.timedelta(days=1)
-            tomorrow = tomorrow.strftime("%d.%m.%Y")
-            letterForUser, letterOfTheClass = checkUserClass(user_id=event.user_id)
-            today = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
-            weekOfTheDay = datetime.datetime.weekday(today) + 1
-            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
-            if weekOfTheDay == 0:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}3:{letterOfTheClass}13").execute()
-            if weekOfTheDay == 1:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}14:{letterOfTheClass}24").execute()
-            if weekOfTheDay == 2:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}25:{letterOfTheClass}35").execute()
-            if weekOfTheDay == 3:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}36:{letterOfTheClass}46").execute()
-            if weekOfTheDay == 4:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}47:{letterOfTheClass}57").execute()
-            if weekOfTheDay == 5:
-                resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}58:{letterOfTheClass}68").execute()
-            if weekOfTheDay == 6:
-                vk.messages.send(
-                    user_id=event.user_id,
-                    message="В воскресенье уроков нет.",
-                    random_id=get_random_id(),
-                    keyboard=keyboard.get_keyboard()
-            )
-            print(resp)
-            values = resp.get('values', [])
-            values2 = timetableOfCalls.get('values', [])
-            count = len(values)
-            listtt = []
-            listtt2 = []
-            for i in range(0, count):
-                listtt.append((str(values[i]))[2:][:-2])
-                listtt2.append((str(values2[i]))[2:][:-2])
-                text = f'Расписание {letterForUser} на завтра {tomorrow}:\n\n'
-                text2 = '\n\nХорошего дня!'
-                res = text + '\n'.join(
-                '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            try:
-                send_message(message=res)
-            except:
-                error_message()
-
-        def monday(user_id):
-            now = datetime.datetime.now()
-            now.strftime("%Y-%m-%d %H:%M")
-            letterForUser, letterOfTheClass = checkUserClass(user_id=event.user_id)
-            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
-            resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}3:{letterOfTheClass}13").execute()
-            values = resp.get('values', [])
-            values2 = timetableOfCalls.get('values', [])
-            count = len(values)
-            listtt = []
-            listtt2 = []
-            for i in range(0, count):
-                listtt.append((str(values[i]))[2:][:-2])
-                listtt2.append((str(values2[i]))[2:][:-2])
-                text = f'Расписание {letterForUser} на понедельник:\n\n'
-                text2 = '\n\nХорошего дня!'
-                res = text + '\n'.join(
-                '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            try:
-                send_message(message=res)
-            except:
-                error_message()
-
-        def tuesday(user_id):
-            now = datetime.datetime.now()
-            now.strftime("%Y-%m-%d %H:%M")
-            letterForUser, letterOfTheClass = checkUserClass(user_id=event.user_id)
-            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
-            resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}14:{letterOfTheClass}24").execute()
-            values = resp.get('values', [])
-            values2 = timetableOfCalls.get('values', [])
-            count = len(values)
-            listtt = []
-            listtt2 = []
-            for i in range(0, count):
-                listtt.append((str(values[i]))[2:][:-2])
-                listtt2.append((str(values2[i]))[2:][:-2])
-                text = f'Расписание {letterForUser} на вторник:\n\n'
-                text2 = '\n\nХорошего дня!'
-                res = text + '\n'.join(
-                '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            try:
-                send_message(message=res)
-            except:
-                error_message()
-
-        def wednesday(user_id):
-            now = datetime.datetime.now()
-            now.strftime("%Y-%m-%d %H:%M")
-            letterForUser, letterOfTheClass = checkUserClass(user_id=event.user_id)
-            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
-            resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}25:{letterOfTheClass}35").execute()
-            values = resp.get('values', [])
-            values2 = timetableOfCalls.get('values', [])
-            count = len(values)
-            listtt = []
-            listtt2 = []
-            for i in range(0, count):
-                listtt.append((str(values[i]))[2:][:-2])
-                listtt2.append((str(values2[i]))[2:][:-2])
-                text = f'Расписание {letterForUser} на среду:\n\n'
-                text2 = '\n\nХорошего дня!'
-                res = text + '\n'.join(
-                '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            try:
-                send_message(message=res)
-            except:
-                error_message()
-
-        def thursday(user_id):
-            now = datetime.datetime.now()
-            now.strftime("%Y-%m-%d %H:%M")
-            letterForUser, letterOfTheClass = checkUserClass(user_id=event.user_id)
-            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
-            resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}36:{letterOfTheClass}46").execute()
-            values = resp.get('values', [])
-            values2 = timetableOfCalls.get('values', [])
-            count = len(values)
-            listtt = []
-            listtt2 = []
-            for i in range(0, count):
-                listtt.append((str(values[i]))[2:][:-2])
-                listtt2.append((str(values2[i]))[2:][:-2])
-                text = f'Расписание {letterForUser} на четверг:\n\n'
-                text2 = '\n\nХорошего дня!'
-                res = text + '\n'.join(
-                '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            try:
-                send_message(message=res)
-            except:
-                error_message()
-
-        def friday(user_id):
-            now = datetime.datetime.now()
-            now.strftime("%Y-%m-%d %H:%M")
-            letterForUser, letterOfTheClass = checkUserClass(user_id=event.user_id)
-            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
-            resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}47:{letterOfTheClass}57").execute()
-            values = resp.get('values', [])
-            values2 = timetableOfCalls.get('values', [])
-            count = len(values)
-            listtt = []
-            listtt2 = []
-            for i in range(0, count):
-                listtt.append((str(values[i]))[2:][:-2])
-                listtt2.append((str(values2[i]))[2:][:-2])
-                text = f'Расписание {letterForUser} на понедельник:\n\n'
-                text2 = '\n\nХорошего дня!'
-                res = text + '\n'.join(
-                '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            try:
-                send_message(message=res)
-            except:
-                error_message()
-
-        def saturday(user_id):
-            now = datetime.datetime.now()
-            now.strftime("%Y-%m-%d %H:%M")
-            letterForUser, letterOfTheClass = checkUserClass(user_id=event.user_id)
-            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
-            resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}58:{letterOfTheClass}68").execute()
-            values = resp.get('values', [])
-            values2 = timetableOfCalls.get('values', [])
-            count = len(values)
-            listtt = []
-            listtt2 = []
-            for i in range(0, count):
-                listtt.append((str(values[i]))[2:][:-2])
-                listtt2.append((str(values2[i]))[2:][:-2])
-                text = f'Расписание {letterForUser} на субботу:\n\n'
-                text2 = '\n\nХорошего дня!'
-                res = text + '\n'.join(
-                '{}.({}) {}'.format(i, ''.join(map(str, t)), ''.join(map(str, g))) for i, (g, t) in enumerate(zip(listtt, listtt2), 1)) + text2
-            try:
-                send_message(message=res)
-            except:
-                error_message()
-
         while True:    
             try:
                 for event in longpoll.listen():
                     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                        allVars = ['начать', 'меню', 'сегодня', 'завтра', 'выбор по дню недели', 'выбор класса', 
+                        'понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 
+                        '5а', '5б', '5в', '5г', '6а', '6б', '6в', '7а', '7б', '7в', '7г', '8а', '8б', '8в', '8г', '9а', '9б', '9в', '9г', '10а', '11а']
+                        if event.text.lower() not in allVars:
+                            unknown_message()
                         if event.text.lower() == "начать" or event.text.lower() == "меню":
-                            start()
+                            startMessage()
                         if event.text.lower() == "сегодня":
-                            timetableToday()
+                            get_today(self=self, user_id=event.user_id)
                         if event.text.lower() == "завтра":
-                            timetableTomorrow()
+                            get_tomorrow(self=self, user_id=event.user_id)
                         if event.text.lower() == "выбор по дню недели":
                             vk.messages.send(
                                 user_id=event.user_id,
@@ -466,17 +333,17 @@ class bot:
                                 keyboard=keyboardClassChoice.get_keyboard()
                             )
                         if event.text.lower() == "понедельник":
-                            monday(user_id=event.user_id)
+                            get_day_timetable(self, day=1, user_id=event.user_id)
                         if event.text.lower() == "вторник":
-                            tuesday(user_id=event.user_id)
+                            get_day_timetable(self, day=2, user_id=event.user_id)
                         if event.text.lower() == "среда":
-                            wednesday(user_id=event.user_id)
+                            get_day_timetable(self, day=3, user_id=event.user_id)
                         if event.text.lower() == "четверг":
-                            thursday(user_id=event.user_id)
+                            get_day_timetable(self, day=4, user_id=event.user_id)
                         if event.text.lower() == "пятница":
-                            friday(user_id=event.user_id)
+                            get_day_timetable(self, day=5, user_id=event.user_id)
                         if event.text.lower() == "суббота":
-                            saturday(user_id=event.user_id)
+                            get_day_timetable(self, day=6, user_id=event.user_id)
                         if event.text.lower() == "5а":
                             us_id, us_name, us_sname, us_class, sub = userInfo()
                             userClassChoice = "5А"
@@ -934,3 +801,4 @@ def scheduleRunner(self):
         time.sleep(1)
 
 b.main().job().run()
+
