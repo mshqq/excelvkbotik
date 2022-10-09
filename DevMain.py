@@ -135,7 +135,10 @@ class bot:
 
         def get_timedata(self, day, letterOfTheClass):
             weekOfTheDay = day
-            timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
+            if weekOfTheDay == 5:
+                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C58:C66").execute()
+            else:
+                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
             if weekOfTheDay == 1:
                 resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}3:{letterOfTheClass}13").execute()
             if weekOfTheDay == 2:
