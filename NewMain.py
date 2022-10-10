@@ -135,22 +135,24 @@ class bot:
 
         def get_timedata(self, day, letterOfTheClass):
             weekOfTheDay = day
-            if weekOfTheDay == 6:
-                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C58:C66").execute()
-            else:
-                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
             if weekOfTheDay == 1:
                 resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}3:{letterOfTheClass}13").execute()
+                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C3:C13").execute()
             if weekOfTheDay == 2:
                 resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}14:{letterOfTheClass}24").execute()
+                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C14:C24").execute()
             if weekOfTheDay == 3:
                 resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}25:{letterOfTheClass}35").execute()
+                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C25:C35").execute()
             if weekOfTheDay == 4:
                 resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}36:{letterOfTheClass}46").execute()
+                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C36:C46").execute()
             if weekOfTheDay == 5:
                 resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}47:{letterOfTheClass}57").execute()
+                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C47:C57").execute()
             if weekOfTheDay == 6:
                 resp = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!{letterOfTheClass}58:{letterOfTheClass}68").execute()
+                timetableOfCalls = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!C58:C66").execute()
             values = resp.get('values', [])
             values2 = timetableOfCalls.get('values', [])
             count = len(values)
@@ -211,7 +213,7 @@ class bot:
             mainMsg = sheet.values().get(spreadsheetId=sheet_id, range=f"Уроки!D1:X1").execute()
             values3 = mainMsg.get('values', [])
             editMsg = (str.lower(str(values3[0])))[2:][:-2]
-            editMsg = str.capitalize(editMsg)
+            editMsg = str.capitalize(editMsg)   
             mainMessage = editMsg + "\n\n"
             text = f'Расписание {letterForUser} на {week_names[day - 1]}:\n\n'
             res = mainMessage + text + get_timedata(self, day, letterOfTheClass)
@@ -265,12 +267,12 @@ class bot:
         
         def userInfo():
             us_id = event.user_id
-            user_get=vk.users.get(user_ids = (event.user_id))
-            user_get=user_get[0]
+            user_get = vk.users.get(user_ids = (event.user_id))
+            user_get = user_get[0]
             us_name = user_get['first_name']
             us_sname = user_get['last_name']
             sub = False
-            return us_id, us_name, us_sname, sub;
+            return us_id, us_name, us_sname, sub
 
         def registerUser(user_id: int, user_name: str, user_surname: str, user_class: str, sub: bool):
             cursor.execute('INSERT INTO ExcelVKBot (user_id, user_name, user_surname, user_class, sub) VALUES (?, ?, ?, ?, ?)', (user_id, user_name, user_surname, user_class, sub))
